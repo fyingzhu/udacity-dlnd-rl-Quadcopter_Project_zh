@@ -45,26 +45,26 @@ class Actor:
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # hidden1
-        h1 = layers.Dense(units=32, activation=None, use_bias=False)(states)
+        h1 = layers.Dense(units=4, activation=None, use_bias=False)(states)
         h1 = layers.BatchNormalization()(h1)
         h1 = layers.Activation('relu')(h1)
         h1 = layers.Dropout(0.5)(h1)
         
         # hidden2
-        h2 = layers.Dense(units=64, activation=None, use_bias=False)(h1)
+        h2 = layers.Dense(units=16, activation=None, use_bias=False)(h1)
         h2 = layers.BatchNormalization()(h2)
         h2 = layers.Activation('relu')(h2)
         h2 = layers.Dropout(0.5)(h2)
-        
+        '''
         # hidden3
         h3 = layers.Dense(units=32, activation=None, use_bias=False)(h2)
         h3 = layers.BatchNormalization()(h3)
         h3 = layers.Activation('relu')(h3)
         h3 = layers.Dropout(0.5)(h3)
-        
+        '''
         # output layer with sigmoid activation; output range -> [0,1]
         raw_actions = layers.Dense(units=self.action_size, activation='sigmoid',
-                                   name='raw_actions')(h3)
+                                   name='raw_actions')(h2)
 
         # Scale [0, 1] output for each action dimension to proper range
         actions = layers.Lambda(lambda x: (x * self.action_range) + self.action_low,
@@ -128,39 +128,39 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
 
         # hidden layer for state pathway
-        h1_states = layers.Dense(units=32, activation=None, use_bias=False)(states)
+        h1_states = layers.Dense(units=64, activation=None, use_bias=False)(states)
         h1_states = layers.BatchNormalization()(h1_states)
         h1_states = layers.Activation('relu')(h1_states)
         h1_states = layers.Dropout(0.5)(h1_states)
         
-        h2_states = layers.Dense(units=64, activation=None, use_bias=False)(h1_states)
+        h2_states = layers.Dense(units=128, activation=None, use_bias=False)(h1_states)
         h2_states = layers.BatchNormalization()(h2_states)
         h2_states = layers.Activation('relu')(h2_states)
         h2_states = layers.Dropout(0.5)(h2_states)
-        
+        '''
         h3_states = layers.Dense(units=32, activation=None, use_bias=False)(h2_states)
         h3_states = layers.BatchNormalization()(h3_states)
         h3_states = layers.Activation('relu')(h3_states)
         h3_states = layers.Dropout(0.5)(h3_states)
-        
+        '''
         # Add hidden layer(s) for action pathway
-        h1_actions = layers.Dense(units=32, activation=None, use_bias=False)(actions)
+        h1_actions = layers.Dense(units=64, activation=None, use_bias=False)(actions)
         h1_actions = layers.BatchNormalization()(h1_actions)
         h1_actions = layers.Activation('relu')(h1_actions)
         h1_states = layers.Dropout(0.5)(h1_states)
         
-        h2_actions = layers.Dense(units=64, activation=None, use_bias=False)(h1_actions)
+        h2_actions = layers.Dense(units=128, activation=None, use_bias=False)(h1_actions)
         h2_actions = layers.BatchNormalization()(h2_actions)
         h2_actions = layers.Activation('relu')(h2_actions)
         h2_states = layers.Dropout(0.5)(h2_states)
-        
+        '''
         h3_actions = layers.Dense(units=32, activation=None, use_bias=False)(h2_actions)
         h3_actions = layers.BatchNormalization()(h3_actions)
         h3_actions = layers.Activation('relu')(h3_actions)
         h3_states = layers.Dropout(0.5)(h3_states)
-        
+        '''
         # Combine state and action pathways
-        add_net = layers.Add()([h3_states, h3_actions])
+        add_net = layers.Add()([h2_states, h2_actions])
         add_net = layers.Activation('relu')(add_net)
 
         # Add final output layer to prduce action values (Q values)

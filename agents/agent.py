@@ -9,8 +9,8 @@ class DDPG_Agent():
     
     def __init__(self, 
                  task,
-                 learning_rate_actor,
-                 learning_rate_critic,
+                 learning_rate_actor=0.0001,
+                 learning_rate_critic=0.001,
                  gamma=0.99,
                  tau = 0.01,
                  buffer_size = 100000,
